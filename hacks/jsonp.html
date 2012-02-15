@@ -1,0 +1,52 @@
+<html>
+<title>Simple JSONP demo using geonames.org JSONP API</title>
+<head>
+
+</head>
+
+<body>
+Simple demo of JSONP call to remote server to get geonames for a zip code <br>
+and call back to a method on this page with the data returned from the remote server<br>
+<p>
+View the source to see how simple this is.
+<p>
+<hr>
+
+<br>
+<form id='zip'>
+Zip code: <input type="text" name="zip"/><br/>
+Click here to do the JSONP call out to geonames<input type=button onClick="doJSONP();" value="doRemoteCall"/>
+</form>
+
+
+<script type="text/javascript">
+
+var zipcode = document.forms[0].zip.value;
+
+// The local callback function
+// just present the data we got as json from the server side call
+function myCallbackFunction(data) {
+    var textToPresent = "You sumitted the zip code:" + data.postalcodes[0].postalcode  +
+    	" County: " + data.postalcodes[0].adminName2 + " State:" + data.postalcodes[0].adminCode1 + 
+    	" longitude:" + data.postalcodes[0].lng + " latitude:" + data.postalcodes[0].lat;
+    alert(textToPresent);
+}
+
+// URL of the remote service that returns the JSON data to the callback function
+// NOTE: the function to call back is prepended to the JSON data by the server so it needs to be included in the argument set
+var url = "http://www.geonames.org/postalCodeLookupJSON?postalcode=" + zipcode + "&country=US&callback=myCallbackFunction";
+
+function doJSONP() {
+	// Do a get on the remote URL using the script 
+	var scriptCallback = document.createElement('script');
+	scriptCallback.setAttribute('src', url);
+
+	// load the script in this pages DOM that was returned from the remote call
+	// This script is actually a function call to our callback
+	document.getElementsByTagName('head')[0].appendChild(scriptCallback); 
+}
+
+</script>
+
+</body>
+</html>
